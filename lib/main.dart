@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'gamelogic.dart';
 
-//import 'package:flutter/animation.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -27,6 +26,35 @@ class _TicTacToePageState extends State<TicTacToePage> {
     }
   }
 
+  Widget createCell(int r, int c) {
+    return Expanded(
+      child: OneBox(
+        buttonChild: updateIcon(r, c),
+        colors: colorBoard[r][c]
+            ? Colors.yellow.withOpacity(.5)
+            : Colors.white24,
+        onPressed: () {
+          updateBox(r, c);
+          setState(() {});
+        },
+      ),
+    );
+  }
+
+  Widget createRow(int r ){
+    return   Expanded(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: <Widget>[
+          createCell(r,0),
+          createCell(r,1),
+          createCell(r,2)
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +63,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             image: DecorationImage(
-                image: AssetImage('assets/tictactoe03.jpg'), fit: BoxFit.fill)),
+                image: AssetImage('assets/bg1.jpg'), fit: BoxFit.cover)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -71,120 +99,9 @@ class _TicTacToePageState extends State<TicTacToePage> {
                 margin: EdgeInsets.all(6),
                 child: Column(
                   children: <Widget>[
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[0][0],
-                              colors: colorBoard[0][0],
-                              onPressed: () {
-                                updateBox(0, 0);
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[0][1],
-                              colors: colorBoard[0][1],
-                              onPressed: () {
-                                updateBox(0, 1);
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[0][2],
-                              colors: colorBoard[0][2],
-                              onPressed: () {
-                                updateBox(0, 2);
-                                setState(() {});
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[1][0],
-                              colors: colorBoard[1][0],
-                              onPressed: () {
-                                updateBox(1, 0);
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[1][1],
-                              colors: colorBoard[1][1],
-                              onPressed: () {
-                                updateBox(1, 1);
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[1][2],
-                              colors: colorBoard[1][2],
-                              onPressed: () {
-                                updateBox(1, 2);
-                                setState(() {});
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: <Widget>[
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[2][0],
-                              colors: colorBoard[2][0],
-                              onPressed: () {
-                                updateBox(2, 0);
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[2][1],
-                              colors: colorBoard[2][1],
-                              onPressed: () {
-                                updateBox(2, 1);
-                                setState(() {});
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: OneBox(
-                              buttonChild: board[2][2],
-                              colors: colorBoard[2][2],
-                              onPressed: () {
-                                updateBox(2, 2);
-                                setState(() {});
-                              },
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
+                    createRow(0),
+                    createRow(1),
+                    createRow(2),
                   ],
                 ),
               ),
@@ -209,7 +126,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                         },
                         child: Text("Reset",
                             style:
-                                TextStyle(fontSize: 25, color: Colors.white)),
+                            TextStyle(fontSize: 25, color: Colors.white)),
                       ),
                     ),
                   ),
@@ -229,9 +146,9 @@ class _TicTacToePageState extends State<TicTacToePage> {
   void updateBox(int r, int c) {
     if (legitMove(board[r][c])) {
       if (currentPlayer == 'Player X Move') {
-        board[r][c] = xIcon;
+        board[r][c] = Token.x;
       } else {
-        board[r][c] = oIcon;
+        board[r][c] = Token.o;
       }
       winnerPopup();
     }
@@ -242,10 +159,10 @@ class OneBox extends StatelessWidget {
   final Widget buttonChild;
   final Function onPressed;
   final Color colors;
-  OneBox(
-      {this.buttonChild = const Text(''),
-      this.onPressed,
-      this.colors = Colors.white24});
+
+  OneBox({this.buttonChild = const Text(''),
+    this.onPressed,
+    this.colors = Colors.white24});
 
   @override
   Widget build(BuildContext context) {
