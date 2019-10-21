@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'gamelogic.dart';
 
-
 void main() {
   runApp(MaterialApp(
     home: TicTacToePage(),
@@ -16,23 +15,12 @@ class TicTacToePage extends StatefulWidget {
 }
 
 class _TicTacToePageState extends State<TicTacToePage> {
-  void winnerPopup() {
-    if (winnerCheck(board)) {
-      currentPlayer = "${currentPlayer.substring(7, 9)} Won";
-    } else if (fullBoard(board)) {
-      currentPlayer = "draw";
-    } else {
-      changePlayer(currentPlayer);
-    }
-  }
-
   Widget createCell(int r, int c) {
     return Expanded(
       child: OneBox(
         buttonChild: updateIcon(r, c),
-        colors: colorBoard[r][c]
-            ? Colors.yellow.withOpacity(.5)
-            : Colors.white24,
+        colors:
+            colorBoard[r][c] ? Colors.yellow.withOpacity(.5) : Colors.white24,
         onPressed: () {
           updateBox(r, c);
           setState(() {});
@@ -41,15 +29,15 @@ class _TicTacToePageState extends State<TicTacToePage> {
     );
   }
 
-  Widget createRow(int r ){
-    return   Expanded(
+  Widget createRow(int r) {
+    return Expanded(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          createCell(r,0),
-          createCell(r,1),
-          createCell(r,2)
+          createCell(r, 0),
+          createCell(r, 1),
+          createCell(r, 2)
         ],
       ),
     );
@@ -85,7 +73,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
               child: Container(
                 alignment: Alignment.topCenter,
                 child: Text(
-                  "$currentPlayer",
+                  currentStatus(),
                   style: TextStyle(
                       fontSize: 25,
                       color: Colors.white.withOpacity(0.6),
@@ -126,7 +114,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
                         },
                         child: Text("Reset",
                             style:
-                            TextStyle(fontSize: 25, color: Colors.white)),
+                                TextStyle(fontSize: 25, color: Colors.white)),
                       ),
                     ),
                   ),
@@ -145,12 +133,8 @@ class _TicTacToePageState extends State<TicTacToePage> {
 
   void updateBox(int r, int c) {
     if (legitMove(board[r][c])) {
-      if (currentPlayer == 'Player X Move') {
-        board[r][c] = Token.x;
-      } else {
-        board[r][c] = Token.o;
-      }
-      winnerPopup();
+      board[r][c] = currentPlayer;
+      changePlayerIfGameIsNotOver();
     }
   }
 }
@@ -160,26 +144,27 @@ class OneBox extends StatelessWidget {
   final Function onPressed;
   final Color colors;
 
-  OneBox({this.buttonChild = const Text(''),
-    this.onPressed,
-    this.colors = Colors.white24});
+  OneBox(
+      {this.buttonChild = const Text(''),
+      this.onPressed,
+      this.colors = Colors.white24});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: FlatButton(
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        alignment: Alignment.center,
         child: AnimatedOpacity(
-            duration: Duration(milliseconds: 600),
+            duration: Duration(milliseconds: 200),
             opacity: buttonChild == null ? 0.0 : 1.0,
             child: buttonChild),
-        onPressed: onPressed,
-      ),
-      margin: EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: colors,
-        borderRadius: BorderRadius.all(
-          Radius.circular(14),
+        margin: EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: colors,
+          borderRadius: BorderRadius.all(
+            Radius.circular(14),
+          ),
         ),
       ),
     );
