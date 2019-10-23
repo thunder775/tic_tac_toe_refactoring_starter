@@ -14,7 +14,10 @@ class TicTacToePage extends StatefulWidget {
   _TicTacToePageState createState() => _TicTacToePageState();
 }
 
-class _TicTacToePageState extends State<TicTacToePage> {
+class _TicTacToePageState extends State<TicTacToePage>
+    with SingleTickerProviderStateMixin {
+  AnimationController controller;
+
   Widget createCell(int r, int c) {
     return Expanded(
       child: OneBox(
@@ -41,6 +44,27 @@ class _TicTacToePageState extends State<TicTacToePage> {
         ],
       ),
     );
+  }
+
+  @override
+  void initState() {
+    print("Init Called");
+    controller = AnimationController(
+        duration: Duration(milliseconds: 600), vsync: this, value: 0);
+    controller.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.completed) {
+        controller.reverse();
+      } else if (status == AnimationStatus.dismissed) {
+        controller.forward();
+      }
+    });
+
+    controller.addListener(() {
+      print(controller.value);
+      setState(() {});
+    });
+    controller.forward();
+    super.initState();
   }
 
   @override
@@ -72,12 +96,21 @@ class _TicTacToePageState extends State<TicTacToePage> {
               flex: 1,
               child: Container(
                 alignment: Alignment.topCenter,
-                child: Text(
-                  currentStatus(),
-                  style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white.withOpacity(0.6),
-                      fontFamily: 'Quicksand'),
+                child: Transform.scale(
+                  scale: winnerCheck(board)
+                      ? Tween(begin: 1.0, end: 1.5).transform(controller.value)
+                      : 1.0,
+                  child: Text(
+                    currentStatus(),
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: winnerCheck(board)
+                            ? ColorTween(
+                                    begin: Colors.white, end: Colors.yellow)
+                                .transform(controller.value)
+                            : Colors.white.withOpacity(0.6),
+                        fontFamily: 'Quicksand'),
+                  ),
                 ),
               ),
             ),
@@ -131,6 +164,12 @@ class _TicTacToePageState extends State<TicTacToePage> {
     );
   }
 
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
   void updateBox(int r, int c) {
     if (legitMove(board[r][c])) {
       board[r][c] = currentPlayer;
@@ -139,7 +178,7 @@ class _TicTacToePageState extends State<TicTacToePage> {
   }
 }
 
-class OneBox extends StatelessWidget {
+class OneBox extends StatefulWidget {
   final Widget buttonChild;
   final Function onPressed;
   final Color colors;
@@ -150,18 +189,41 @@ class OneBox extends StatelessWidget {
       this.colors = Colors.white24});
 
   @override
+  _OneBoxState createState() => _OneBoxState();
+}
+
+class _OneBoxState extends State<OneBox> with SingleTickerProviderStateMixin {
+  AnimationController controller;
+
+  @override
+  void initState() {
+    print("Init Called");
+    controller = AnimationController(
+        duration: Duration(milliseconds: 600), vsync: this, value: 0);
+    controller.addStatusListener((AnimationStatus status) {
+      if (status == AnimationStatus.dismissed) {
+        controller.forward();
+      }
+    });
+
+    controller.addListener(() {
+      print(controller.value);
+      setState(() {});
+    });
+    controller.forward();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onPressed,
+      onTap: widget.onPressed,
       child: Container(
         alignment: Alignment.center,
-        child: AnimatedOpacity(
-            duration: Duration(milliseconds: 200),
-            opacity: buttonChild == null ? 0.0 : 1.0,
-            child: buttonChild),
+        child: widget.buttonChild,
         margin: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: colors,
+          color: widget.colors,
           borderRadius: BorderRadius.all(
             Radius.circular(14),
           ),
