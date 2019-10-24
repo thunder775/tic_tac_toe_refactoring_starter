@@ -226,7 +226,7 @@ class _OneBoxState extends State<OneBox> with SingleTickerProviderStateMixin {
           ).animate(animation),
           child: ScaleTransition(
             scale: Tween(
-              begin: 2.0,
+              begin: 8.0,
               end: 1.0,
             ).animate(animation),
             child: widget.buttonChild,
