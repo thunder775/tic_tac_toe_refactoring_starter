@@ -98,7 +98,7 @@ class _TicTacToePageState extends State<TicTacToePage>
                 alignment: Alignment.topCenter,
                 child: Transform.scale(
                   scale: winnerCheck(board)
-                      ? Tween(begin: 1.0, end: 1.5).transform(controller.value)
+                      ? Tween(begin: 1.0, end: 1.2).transform(controller.value)
                       : 1.0,
                   child: Text(
                     currentStatus(),
@@ -198,29 +198,40 @@ class _OneBoxState extends State<OneBox> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     print("Init Called");
-    controller = AnimationController(
-        duration: Duration(milliseconds: 600), vsync: this, value: 0);
-    controller.addStatusListener((AnimationStatus status) {
-      if (status == AnimationStatus.dismissed) {
-        controller.forward();
-      }
-    });
+    controller =
+        AnimationController(duration: Duration(milliseconds: 500), vsync: this);
 
-    controller.addListener(() {
-      print(controller.value);
-      setState(() {});
-    });
-    controller.forward();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    CurvedAnimation animation = CurvedAnimation(
+      parent: controller,
+      curve: Curves.bounceOut,
+    );
     return GestureDetector(
-      onTap: widget.onPressed,
+      onTap: () {
+        if (widget.buttonChild == null) {
+          controller.forward(from: 0);
+        }
+        widget.onPressed();
+      },
       child: Container(
         alignment: Alignment.center,
-        child: widget.buttonChild,
+        child: FadeTransition(
+          opacity: Tween(
+            begin: .0,
+            end: 1.0,
+          ).animate(animation),
+          child: ScaleTransition(
+            scale: Tween(
+              begin: 2.0,
+              end: 1.0,
+            ).animate(animation),
+            child: widget.buttonChild,
+          ),
+        ),
         margin: EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: widget.colors,
