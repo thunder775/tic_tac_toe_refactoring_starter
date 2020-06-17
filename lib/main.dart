@@ -23,7 +23,7 @@ class _TicTacToePageState extends State<TicTacToePage>
       child: OneBox(
         buttonChild: updateIcon(r, c),
         colors:
-            colorBoard[r][c] ? Colors.yellow.withOpacity(.5) : Colors.white24,
+            colorBoard[r][c] ? Colors.white.withOpacity(.5) : Colors.white24,
         onPressed: () {
           updateBox(r, c);
           setState(() {});
@@ -60,7 +60,7 @@ class _TicTacToePageState extends State<TicTacToePage>
     });
 
     controller.addListener(() {
-      print(controller.value);
+//      print(controller.value);
       setState(() {});
     });
     controller.forward();
@@ -70,12 +70,12 @@ class _TicTacToePageState extends State<TicTacToePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFD6AA7C),
-      body: Container(
+//      backgroundColor: Color(0xFFD6AA7C),
+      body: Container(color: Color(0xFF282c34).withOpacity(.8),
         padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: AssetImage('assets/bg1.jpg'), fit: BoxFit.cover)),
+//        decoration: BoxDecoration(
+//            image: DecorationImage(
+//                image: AssetImage('assets/bg1.jpg'), fit: BoxFit.cover)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
@@ -106,7 +106,7 @@ class _TicTacToePageState extends State<TicTacToePage>
                         fontSize: 25,
                         color: winnerCheck(board)
                             ? ColorTween(
-                                    begin: Colors.white, end: Colors.yellow)
+                                    begin: Colors.white, end: Color(0xFF282c34))
                                 .transform(controller.value)
                             : Colors.white.withOpacity(0.6),
                         fontFamily: 'Quicksand'),
@@ -139,15 +139,13 @@ class _TicTacToePageState extends State<TicTacToePage>
                   Expanded(
                     flex: 2,
                     child: SizedBox(
-                      child: FlatButton(
-                        color: Color(0xFF848AC1),
+                      child: FloatingActionButton(backgroundColor: Color(0xFF282c34),
+//                        color: Color(0xFF848AC1),
                         onPressed: () {
                           gameReset();
                           setState(() {});
                         },
-                        child: Text("Reset",
-                            style:
-                                TextStyle(fontSize: 25, color: Colors.white)),
+                        child: Icon(Icons.refresh,size: 32,),
                       ),
                     ),
                   ),
